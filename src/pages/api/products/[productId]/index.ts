@@ -13,7 +13,7 @@ const handler: NextApiHandler = async (req, res) => {
   case 'PATCH':
     return productController.patchUpdateExistingProduct(req, res);
   case 'DELETE':
-    return productController.deleteProduct(req, res);
+    return productController.deleteProductById(req, res);
   default:
     break;
   }

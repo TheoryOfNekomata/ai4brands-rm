@@ -10,7 +10,7 @@ export interface ProductController {
   postCreateProduct: NextApiHandler<Product>;
   patchUpdateExistingProduct: NextApiHandler<Product>;
   putEmplaceProduct: NextApiHandler<Product>;
-  deleteProduct: NextApiHandler<Product>;
+  deleteProductById: NextApiHandler<Product>;
 }
 
 export class ProductControllerImpl implements ProductController {
@@ -99,7 +99,7 @@ export class ProductControllerImpl implements ProductController {
     }
   }
 
-  readonly deleteProduct: NextApiHandler<Product> = async (req, res) => {
+  readonly deleteProductById: NextApiHandler<Product> = async (req, res) => {
     const productId = req.query.productId as Product['id'];
 
     try {

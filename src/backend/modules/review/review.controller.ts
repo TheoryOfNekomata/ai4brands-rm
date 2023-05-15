@@ -1,4 +1,4 @@
-import {ReviewRequired, ReviewService, ReviewServiceImpl} from './review.service';
+import {ReviewEditable, ReviewRequired, ReviewService, ReviewServiceImpl} from './review.service';
 import {NextApiHandler} from 'next';
 import { Review } from 'src/common/models';
 import {constants} from 'http2';
@@ -6,7 +6,12 @@ import {Prisma} from '@prisma/client';
 import {SessionService, SessionServiceImpl} from 'src/backend/modules/session';
 
 export interface ReviewController {
-
+  getReviewsByProductId: NextApiHandler<Review[]>;
+  getReviewsByReviewerUserId: NextApiHandler<Review[]>;
+  getReviewById: NextApiHandler<Review>;
+  postCreateReview: NextApiHandler<Review>;
+  patchUpdateExistingReview: NextApiHandler<Review>;
+  deleteReviewById: NextApiHandler;
 }
 
 export class ReviewControllerImpl implements ReviewController {
@@ -82,7 +87,38 @@ export class ReviewControllerImpl implements ReviewController {
 
   readonly patchUpdateExistingReview: NextApiHandler<Review> = async (req, res) => {
     try {
-      const reviewId = req.query.reviewId
+      const reviewId = req.query.reviewId as string;
+      const review = req.body as ReviewEditable;
+      const updatedReview = await this.reviewService.updateReviewById(reviewId, review);
+      res.status(constants.HTTP_STATUS_OK).json(updatedReview);
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError
+        && err.code === 'P2025'
+      ) {
+        res.status(constants.HTTP_STATUS_NOT_FOUND).end();
+        return;
+      }
+
+      res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).end();
     }
   };
+
+  readonly deleteReviewById: NextApiHandler = async (req, res) => {
+    try {
+      const reviewId = req.query.reviewId as string;
+      await this.reviewService.deleteReviewById(reviewId);
+      res.status(constants.HTTP_STATUS_NO_CONTENT).end();
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError
+        && err.code === 'P2025'
+      ) {
+        res.status(constants.HTTP_STATUS_NOT_FOUND).end();
+        return;
+      }
+
+      res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).end();
+    }
+  }
 }
