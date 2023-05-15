@@ -4,6 +4,7 @@ export type {
   Campaign,
   User,
   Review,
+  Session,
 } from '@prisma/client'
 
 export const enum UserType {

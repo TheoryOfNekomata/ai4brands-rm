@@ -6,7 +6,7 @@ import { ProductService, ProductServiceImpl } from './product.service';
 
 export interface ProductController {
   getQueryMultipleProducts: NextApiHandler<Product[]>;
-  getProduct: NextApiHandler<Product>;
+  getProductById: NextApiHandler<Product>;
   postCreateProduct: NextApiHandler<Product>;
   patchUpdateExistingProduct: NextApiHandler<Product>;
   putEmplaceProduct: NextApiHandler<Product>;
@@ -23,7 +23,7 @@ export class ProductControllerImpl implements ProductController {
     res.status(constants.HTTP_STATUS_OK).json(products);
   };
 
-  readonly getProduct: NextApiHandler<Product> = async (req, res) => {
+  readonly getProductById: NextApiHandler<Product> = async (req, res) => {
     try {
       const productId = req.query.productId as Product['id'];
       const product = await this.productService.getProductByIdOrThrow(productId);

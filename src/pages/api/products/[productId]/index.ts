@@ -7,7 +7,7 @@ const productController: ProductController = new ProductControllerImpl();
 const handler: NextApiHandler = async (req, res) => {
   switch (req.method?.toUpperCase()) {
   case 'GET':
-    return productController.getProduct(req, res);
+    return productController.getProductById(req, res);
   case 'PUT':
     return productController.putEmplaceProduct(req, res);
   case 'PATCH':
